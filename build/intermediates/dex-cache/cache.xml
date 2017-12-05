@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="C:\Users\Jack\.android\build-cache\fb661d3e59a9162421fbe9f0a1a37aacc497423f\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.2"
+        sha1="88246166d5afb106f532f6e6deae683c66b42c89">
+        <dex dex="E:\Jack\Documents\Uni Work\4th Year\Mobile Game Development\Coursework\MGD1-Coursework\app\build\intermediates\pre-dexed\debug\classes_21425823bf9f3dba178c22a4cebbd3c155ae3382.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Jack\.android\build-cache\d103fc8f4ef3cebf058013ddfe88bb200d0ca91b\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.2"
+        sha1="952944218ecedea1554a513dec0c14d570642843">
+        <dex dex="E:\Jack\Documents\Uni Work\4th Year\Mobile Game Development\Coursework\MGD1-Coursework\app\build\intermediates\pre-dexed\debug\classes_cdccc1643e81f2d55dfeda53607bddaed03f5cf2.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Jack\.android\build-cache\2714379b409c6e78b9aca67fa134ad3aa6c25fbb\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.2"
+        sha1="2e92aa0163544a804a0b34f169ca61801770839a">
+        <dex dex="E:\Jack\Documents\Uni Work\4th Year\Mobile Game Development\Coursework\MGD1-Coursework\app\build\intermediates\pre-dexed\debug\classes_bed53b3797b08e0bfa0e1139016e17c5113b8227.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Jack\.android\build-cache\b73065055803f7bab24a07be308504992f942b05\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.2"
+        sha1="8df0e365e40beb151bc42dee20817721a6cab7b0">
+        <dex dex="E:\Jack\Documents\Uni Work\4th Year\Mobile Game Development\Coursework\MGD1-Coursework\app\build\intermediates\pre-dexed\debug\classes_3de55609ba6ff31099264f7e93f7d549d606d1dc.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Jack\.android\build-cache\957ecb4d549a70bb3a010ad63ea3a75fac437374\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.2"
+        sha1="fcd01fd11233459f546c437ec927e9b61bf7caf1">
+        <dex dex="E:\Jack\Documents\Uni Work\4th Year\Mobile Game Development\Coursework\MGD1-Coursework\app\build\intermediates\pre-dexed\debug\classes_2a2f8960452f8b4e4d8b1d240265a668224a2344.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Jack\.android\build-cache\3216549927e1597659ad18ddc66287f82e518c68\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.2"
+        sha1="9935891f23923f39d002087085d9696568a9f657">
+        <dex dex="E:\Jack\Documents\Uni Work\4th Year\Mobile Game Development\Coursework\MGD1-Coursework\app\build\intermediates\pre-dexed\debug\classes_1b32c708fac89f7f35585510460d39b7bb2c9ee0.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Jack\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\26.0.0-alpha1\support-annotations-26.0.0-alpha1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.2"
+        sha1="023ee503b631f69511e335a061ea008f8da60f40">
+        <dex dex="E:\Jack\Documents\Uni Work\4th Year\Mobile Game Development\Coursework\MGD1-Coursework\app\build\intermediates\pre-dexed\debug\support-annotations-26.0.0-alpha1_8e01c4e4b55f127e7ae1e2dd1e3716237f009515.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Jack\.android\build-cache\33394e0e7165e7d16b7df59d343f81e182115741\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.2"
+        sha1="18d31838aa4fcc768a8a0516e22cc13b94655d89">
+        <dex dex="E:\Jack\Documents\Uni Work\4th Year\Mobile Game Development\Coursework\MGD1-Coursework\app\build\intermediates\pre-dexed\debug\classes_15910ca9da71ae75a0d187698186782d12113b7f.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Jack\.android\build-cache\77dc617ae029b3a79254aa10184f013e94cbc14f\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.2"
+        sha1="44ee06abb66da30f5855e6bf54574e64cdcd982a">
+        <dex dex="E:\Jack\Documents\Uni Work\4th Year\Mobile Game Development\Coursework\MGD1-Coursework\app\build\intermediates\pre-dexed\debug\classes_707904054222e0e93b60d3b38b065a65964b6034.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Jack\AppData\Local\Android\sdk\extras\m2repository\com\android\support\constraint\constraint-layout-solver\1.0.2\constraint-layout-solver-1.0.2.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.2"
+        sha1="b9cd8fc6bd15cb915735d34535db30ece0c44603">
+        <dex dex="E:\Jack\Documents\Uni Work\4th Year\Mobile Game Development\Coursework\MGD1-Coursework\app\build\intermediates\pre-dexed\debug\constraint-layout-solver-1.0.2_cf1ecf73cb08877bcf27963fff04efc9f8970211.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Jack\.android\build-cache\4128716695daa98c2d65b28b409c36bdbdc26107\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.2"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="E:\Jack\Documents\Uni Work\4th Year\Mobile Game Development\Coursework\MGD1-Coursework\app\build\intermediates\pre-dexed\debug\classes_c33d0301c6b1cf81f9a6efc44a3ea6f5e2e7c5dc.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Jack\.android\build-cache\aacbd3f87ffdc616d5d02457642d254d5b5f6cab\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.2"
+        sha1="47471eb19df288158b00b8d9cfa41bce7373f5cc">
+        <dex dex="E:\Jack\Documents\Uni Work\4th Year\Mobile Game Development\Coursework\MGD1-Coursework\app\build\intermediates\pre-dexed\debug\classes_58ef81ebd0055d1bce335928fcf1f298ab1385a2.jar" />
+    </item>
+
+</items>
