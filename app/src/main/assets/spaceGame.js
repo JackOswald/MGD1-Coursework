@@ -15,9 +15,10 @@ var bulletArray;
 var mainMusic;
 var mainMusicPlaying = false;
 
+var lastPt = null;
 var gameStates = {MainMenu: 0, MainGame: 1, GameOver: 2};
 var currentGameState;
-var bGameOverPlayed = false;
+var gameOverScreen = false;
 
 var timer = 0;
 var score = 0;
@@ -35,27 +36,30 @@ var moveDown = false;
 
 var playerShooting = false;
 
-
-//var playButtonMainMenu = new Image();
-//playButtonMainMenu.src = "playButton.png"
 var playButton;
-
+var replayButton;
 
 function load() {
-
+    // Canvas loading
     canvas = document.getElementById('gameCanvas');
     canvasContext = canvas.getContext('2d');
 
+    //Set the current game state to the main menu
     currentGameState = gameStates.MainMenu;
+
+    // Run init function
     init();
 
+    // Set the dimensions of the canvas
     canvasX = canvas.width/2;
     canvasY = canvas.height-30;
 
+    // Run the game loop
     gameLoop();
 
 }
 
+// Creating a new object called 'aSprite' along with its constructor functions
 function aSprite (x, y, imageSRC, velx, vely) {
 
     this.zindex = 0;
@@ -67,16 +71,19 @@ function aSprite (x, y, imageSRC, velx, vely) {
     this.sImage.src = imageSRC;
 }
 
+// Render the object based on width and height
 aSprite.prototype.renderF = function(width, height) {
 
     canvasContext.drawImage(this.sImage,this.x, this.y, width, height);
 }
 
+// Render the object in the scene
 aSprite.prototype.render = function() {
 
     canvasContext.drawImage(this.sImage,this.x, this.y);
 }
 
+// Update the objects position
 aSprite.prototype.update = function(deltaTime) {
 
     this.x += deltaTime * this.vx;
@@ -84,64 +91,76 @@ aSprite.prototype.update = function(deltaTime) {
     this.y += deltaTime * this.vy;
 }
 
+// Move the player horizontally by the value of x
 aSprite.prototype.movePlayerHorizontal = function (x){
 
     this.x -= x;
-    if (this.x <= 0) { // Keep player within screen
+    if (this.x <= 0) { // Ensure that the player is kept within the screen
     this.x = 0;
     }
-    if (this.x >= canvas.width) {
-        this.x = canvas.width;
+    else if (this.x >= canvas.width - playerImg.width) {
+        this.x = canvas.width - playerImg.width;
     }
 
 }
 
+// Move the player vertically by the value of y
 aSprite.prototype.movePlayerVertical = function (y){
 
     this.y -= y;
-    if (this.y <= 0) { // Keep player within screen
+    if (this.y <= 0) { // Ensure that the player is kept within the screen
     this.y = 0;
     }
-    if (this.y >= canvas.height - this.height) {
-        this.y = canvas.height - this.height;
+    if (this.y >= canvas.height - playerImg.height) {
+        this.y = canvas.height - playerImg.height;
     }
 }
 
+// Move the current object horizontally by the value of x
 aSprite.prototype.moveHorizontal = function (x){
 
     this.x -= x;
-
 }
 
+// Move the current object vertically by the value of y
 aSprite.prototype.moveVertical = function (y){
 
     this.y -= y;
-    if (this.y >= canvas.height) {
-        this.y = 0;
+    if (this.object = enemies) {    // Ensure that the current object (enemies) reappear if not destroyed
+        if (this.y >= canvas.height) {
+            this.y = 0;
+        }
     }
 }
 
-aSprite.prototype.remove = function () {
-
-    console.log("REMOVED");
-    this.active = false;
-}
-
+// Get the x position of the current object
 aSprite.prototype.xPos = function () {
 
     return this.x;
 }
 
+// Get the y position of the current object
 aSprite.prototype.yPos = function () {
 
     return this.y;
 }
 
+aSprite.prototype.setXPos = function (x) {
 
+    this.x = x;
+}
+
+aSprite.prototype.setYPos = function (y) {
+
+    this.y = y;
+}
+
+// Init function
 function init() {
 
     if (canvas.getContext) {
 
+        // Call event listeners
         window.addEventListener('resize', resizeCanvas, false);
         window.addEventListener('orientationchange', resizeCanvas, false);
 
@@ -156,14 +175,15 @@ function init() {
 
         resizeCanvas();
 
+        // Init sprites
         backgroundImg = new aSprite(0, 0, "backgroundImage.png", 0, 0);
         playerImg = new aSprite(canvas.width/2, canvas.height - 60, "player.png", 0, 0);
 
-        playButton = new aSprite(canvas.width/2 - 150, canvas.height/4, "playButton.png",0 ,0);
+        // Init button
+        playButton = new aSprite(canvas.width/2 - 40, canvas.height/4 - 50, "playButton.png",0 ,0);
+        replayButton = new aSprite (canvas.width/2 - 50, canvas.height/4 - 50, "replayButton.png", 0, 0);
 
-        //var theRandImage = ["enemy1.png","enemy2.png","enemy3.png","enemy4.png","enemy5.png","enemy6.png"];
-
-        spawnEnemy(45);
+        //spawnEnemy(50);
 
         lives = 3;
 
@@ -178,6 +198,7 @@ function init() {
 
 }
 
+// Resize the canvas to the current window
 function resizeCanvas() {
 
     canvas.width = window.innerWidth;
@@ -186,7 +207,7 @@ function resizeCanvas() {
 
 function gameLoop() {
 
-    //console.log ("Game Loop");
+    // Play game theme/music
     if (mainMusicPlaying == false) {
         mainMusic = new Audio ("backgroundMusic.mp3");
         mainMusic.play();
@@ -205,9 +226,8 @@ function gameLoop() {
         currentGameState = gameStates.GameOver;
     }
 
-    //console.log(spawnTime);
-    //collisionDetection(playerImg, enemies);
-    collisionTest();
+
+    collision1();
     collision2();
 
     startTimeMS = Date.now();
@@ -216,6 +236,7 @@ function gameLoop() {
 
 }
 
+// Render function
 function render(delta) {
 
     backgroundImg.renderF(canvas.width, canvas.height);
@@ -242,7 +263,7 @@ function render(delta) {
     break;
 
         case 1:
-
+        enemiesSpawned = true;
         playerImg.render();
 
         for (var i = 0; i < enemies.length; i ++) {
@@ -273,6 +294,11 @@ function render(delta) {
         styleText('00FF7F', '25px Times New Roman', 'center', 'hanging');    //'#005A31'
         canvasContext.fillText("Game Over", canvas.width/2, canvas.height/4 - 150);
 
+        styleText('00FF7F', '25px Times New Roman', 'center', 'hanging');    //'#005A31'
+        canvasContext.fillText("Score is " + score, canvas.width/2, canvas.height/4 - 50);
+
+        replayButton.render();
+
         break;
 
     }
@@ -288,7 +314,6 @@ function update(delta) {
 
     case 0:
 
-    bGameOverPlayed = false;
     playButton.update(delta);
 
     break;
@@ -296,7 +321,6 @@ function update(delta) {
 
     case 1:
 
-        bGameOverPlayed = false;
         if (playerShooting) {
             var playerShootSound = new Audio ("playerFire.wav");
             playerShootSound.volume = 0.1;
@@ -315,10 +339,14 @@ function update(delta) {
            if (bullets[i] != null) {
                var bullet = bullets[i];
                  bullet.moveVertical(2);
+                 if (bullet.y <= 0) {
+                    console.log("Bullet removed");
+                    bullets.splice(i,1);
+                 }
            }
         }
         if (lives <= 0) {
-            currentGameState = gameStates.MainGame;
+           console.log ("SWITCH THE GAME STATE");
         }
 
         if (moveLeft) {
@@ -338,94 +366,104 @@ function update(delta) {
    break;
 
     case 2:
-    if (!bGameOverPlayed){
-        bGameOverPlayed = true;
-    }
+
+    replayButton.update(delta);
+    lives = 3;
+    score = 0;
 
     break;
 
-
     }
-
 
 }
 
+// Spawn and enemy based on the value
 function spawnEnemy(value) {
 
     for (var i = 0; i < value; i ++) {
         var randWidth = Math.random() * (canvas.width) + 5;
         enemyArray = new aSprite(randWidth, canvas.height/2 - 50 * i,"enemy1.png" ,0, 0);
         enemies.push(enemyArray);
-        console.log(" spawned");
+        console.log(i + " spawned");
     }
 }
 
-function spawnEnemies(value) {
-
-    var randWidth = Math.random() * (canvas.width - 50) + 5;
-    enemyArray = new aSprite(randWidth, canvas.height/2 - 50 + (2 * i),"enemy1.png" ,0, 0);
-    enemies.push(enemyArray);
-    //console.log(i + " spawned");
-}
-
+// Spawn a bullet based on the value
 function spawnBullet(value) {
 
     for (var i = 0; i < value; i ++) {
 
-        bulletArray = new aSprite(playerImg.xPos() + 10, playerImg.yPos() + 20,
+        bulletArray = new aSprite(playerImg.xPos() + 30, playerImg.yPos() + 1,
         "bullet.png", 0, 100);
         bullets.push(bulletArray);
-        console.log("Bullet fired");
 
-        if (this.y >= 0) {
-            console.log ("OUT OF BOUNDS");
-        }
     }
 }
 
+// Take away 1 life
 function playerLoseLife() {
 
     lives -=1;
 }
 
+// Add score
 function addScore () {
 
     score += 10;
 }
-function collisionTest() {
 
+// Collision between player and enemy
+function collision1() {
+
+    // Iterate through enemy array
     for (var i = 0; i < enemies.length; i++) {
 
+        // If the player image collides with any enemy image in the array
         if (playerImg.x < enemies[i].x + enemies[i].sImage.width &&
             playerImg.x + playerImg.sImage.width > enemies[i].x &&
             playerImg.y < enemies[i].y + enemies[i].sImage.height &&
             playerImg.y + playerImg.sImage.height > enemies[i].y) {
 
-                console.log("HIT!!!");
-                var playerHitSound = new Audio ("enemyHit.wav");
-                playerHitSound.volume = 0.085;
+                // Play hit sound
+                var playerHitSound = new Audio ("shipHit.wav");
+                playerHitSound.volume = 0.3;
                 playerHitSound.play();
-                playerLoseLife();
+
+                // Remove specific enemy from array
                 enemies.splice(i, 1);
 
+                // Player loses a life
+                playerLoseLife();
             }
     }
 
 }
 
+// Collision between bullets and enemies
 function collision2 () {
 
+    // Iterate through enemy array
     for (var i = 0; i < enemies.length; i ++) {
 
+        // Iterate through bullet array
         for (var j = 0; j < bullets.length; j ++) {
 
+            // If an enemy from the enemies array collides with a bullet from the bullet array
             if (bullets[j].x < enemies[i].x + enemies[i].sImage.width &&
                 bullets[j].x + bullets[j].sImage.width > enemies[i].x &&
                 bullets[j].y < enemies[i].y + enemies[i].sImage.height &&
                 bullets[j].y + bullets[j].sImage.height > enemies[i].y) {
 
+                    // Play hit sound
+                    var enemyHitSound = new Audio ("enemyHit.wav");
+                    enemyHitSound.volume = 0.085;
+                    enemyHitSound.play();
+
+                    // Remove the specific bullet and enemy from their relevant arrays
                     enemies.splice(i,1);
                     bullets.splice(j,1);
+
+                    // Score is added to the player
                     addScore();
                 }
         }
@@ -437,8 +475,17 @@ function buttonCollision(button) {
     if (lastPt.x <= button.x + button.sImage.width &&
         lastPt.x >= button.x && lastPt.y <= button.y + button.sImage.height &&
         lastPt.y >= button.y) {
+            if (button == playButton) {
+                currentGameState = gameStates.MainGame;
+                spawnEnemy (5);
 
-            currentGameState = gameStates.MainGame;
+            }
+
+            else if (button == replayButton) {
+                currentGameState = gameStates.MainGame;
+                playerImg.setXPos(canvas.width/2 - 40);
+                playerImg.setYPos(canvas.height/4 - 50);
+            }
 
         }
 
@@ -462,6 +509,8 @@ function touchUp(evt) {
 function touchDown(evt) {
     evt.preventDefault();
     touchXY(evt);
+    console.log(evt);
+    //buttonCollision(playButton);
 }
 
 function touchXY(evt) {
@@ -471,6 +520,8 @@ function touchXY(evt) {
         var touchY = evt.touches[0].pageY - canvas.offsetTop;
         }
     lastPt = {x:evt.touches[0].pageX, y:evt.touches[0].pageY};
+    buttonCollision(playButton);
+    buttonCollision (replayButton);
 }
 
 
@@ -498,12 +549,6 @@ function keyDown(e) {
            currentGameState = gameStates.MainGame;
         }
     }
-
-    if (e.keyCode == 81) {
-            if (currentGameState == gameStates.GameOver) {
-               currentGameState = gameStates.MainGame;
-            }
-        }
 }
 
 function keyUp(e) {
