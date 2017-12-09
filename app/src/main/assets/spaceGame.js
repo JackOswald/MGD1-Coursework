@@ -1,41 +1,51 @@
+// Canvas
 var canvas;
 var canvasContext;
 var canvasX;
 var canvasY;
 var isMouseDown = 0;
 
+// Images
 var backgroundImg;
 var playerImg;
+
+// Arrays
 var enemies = [];
 var enemyArray;
-
 var bullets = [];
 var bulletArray;
 
+// Music
 var mainMusic;
 var mainMusicPlaying = false;
 
+// Mouse handler
 var lastPt = null;
+
+// Game states
 var gameStates = {MainMenu: 0, MainGame: 1, GameOver: 2};
 var currentGameState;
 var gameOverScreen = false;
 
+// Random game/player variables
 var timer = 0;
 var score = 0;
 var lives = 3;
+var playerSpeed = 5;
 
+// Spawn timers
 var startTimeMS;
-
 var lastSpawn;
 var spawnTime;
 
+// Player controls
 var moveRight = false;
 var moveLeft = false;
 var moveUp = false;
 var moveDown = false;
-
 var playerShooting = false;
 
+// Buttons
 var playButton;
 var replayButton;
 
@@ -145,11 +155,13 @@ aSprite.prototype.yPos = function () {
     return this.y;
 }
 
+// Set the position of the x value of the current object
 aSprite.prototype.setXPos = function (x) {
 
     this.x = x;
 }
 
+// Set the current y value of the current object
 aSprite.prototype.setYPos = function (y) {
 
     this.y = y;
@@ -177,18 +189,16 @@ function init() {
 
         // Init sprites
         backgroundImg = new aSprite(0, 0, "backgroundImage.png", 0, 0);
-        playerImg = new aSprite(canvas.width/2, canvas.height - 60, "player.png", 0, 0);
+        playerImg = new aSprite(canvas.width/2, canvas.height/4 - 60, "player.png", 0, 0);
 
         // Init button
         playButton = new aSprite(canvas.width/2 - 40, canvas.height/4 - 50, "playButton.png",0 ,0);
         replayButton = new aSprite (canvas.width/2 - 50, canvas.height/4 - 50, "replayButton.png", 0, 0);
 
-        //spawnEnemy(50);
-
+        // Set the initial number of lives
         lives = 3;
 
-        //bulletImg = new aSprite(canvas.width/2 - 100, canvas.height/2 + 200, "bullet.png", 0, 100);
-
+        // Set the start time
         startTimeMS = Date.now();
         lastSpawn = Date.now();
 
@@ -205,9 +215,10 @@ function resizeCanvas() {
     canvas.height = window.innerHeight;
 }
 
+// Main game loop function
 function gameLoop() {
 
-    // Play game theme/music
+    // If game music is not playing then play game theme/music
     if (mainMusicPlaying == false) {
         mainMusic = new Audio ("backgroundMusic.mp3");
         mainMusic.play();
@@ -222,11 +233,12 @@ function gameLoop() {
     startTimeMS = Date.now();
     spawnTime = (startTimeMS - lastSpawn)/1000;
 
+    // Set the current game state to the game over screen if lives are 0 or less than 0
     if (lives <= 0) {
         currentGameState = gameStates.GameOver;
     }
 
-
+    // Handle the collision detection in the scene
     collision1();
     collision2();
 
@@ -239,22 +251,22 @@ function gameLoop() {
 // Render function
 function render(delta) {
 
+    // Render the background image
     backgroundImg.renderF(canvas.width, canvas.height);
 
+    // Switch the current game state
     switch (currentGameState) {
 
+        // Main menu state
         case 0:
-        styleText('#ffffff', '35px Times New Roman', 'center', 'bottom');    //'#005A31'
+        styleText('#ffffff', '35px Times New Roman', 'center', 'bottom');
         canvasContext.fillText("Space Shooter", canvas.width/2, canvas.height/4 - 150);
 
-        //styleText('#00FF7F', '20px Verona', 'center', 'hanging');    //'#005A31'
-        //canvasContext.fillText("Press 'e' to start", canvas.width/2 , canvas.height/2);
-
-        styleText('#00FF7F', '20px Verona', 'center', 'hanging');    //'#005A31'
+        styleText('#00FF7F', '20px Verona', 'center', 'hanging');
         canvasContext.fillText("Use W A S D or UP DOWN LEFT RIGHT to move",
         canvas.width/2 , canvas.height/2 + 100);
 
-        styleText('#00FF7F', '20px Verona', 'center', 'hanging');    //'#005A31'
+        styleText('#00FF7F', '20px Verona', 'center', 'hanging');
         canvasContext.fillText("Press SPACEBAR to shoot",
         canvas.width/2 , canvas.height/2 + 200);
 
@@ -262,10 +274,12 @@ function render(delta) {
 
     break;
 
+        // Main game state
         case 1:
-        enemiesSpawned = true;
+        // Render the players image
         playerImg.render();
 
+        // Iterate through all of the enemies in the scene and render them
         for (var i = 0; i < enemies.length; i ++) {
             if (enemies[i] != null) {
                 var enemy = enemies[i];
@@ -273,6 +287,7 @@ function render(delta) {
                 }
         }
 
+        // Iterate through all of the bullets in the scene and render them
         for (var i = 0; i < bullets.length; i ++) {
            if (bullets[i] != null) {
                var bullet = bullets[i];
@@ -297,6 +312,7 @@ function render(delta) {
         styleText('00FF7F', '25px Times New Roman', 'center', 'hanging');    //'#005A31'
         canvasContext.fillText("Score is " + score, canvas.width/2, canvas.height/4 - 50);
 
+        // Render the replay button
         replayButton.render();
 
         break;
@@ -306,14 +322,14 @@ function render(delta) {
 
 }
 
+// Update the game state and the sprites within it
 function update(delta) {
-
-    var playerSpeed = 5;
 
     switch (currentGameState) {
 
     case 0:
 
+    // Update the position of the play button
     playButton.update(delta);
 
     break;
@@ -321,13 +337,18 @@ function update(delta) {
 
     case 1:
 
+        // Check if the player is shooting
         if (playerShooting) {
+            // Play shooting sound
             var playerShootSound = new Audio ("playerFire.wav");
             playerShootSound.volume = 0.1;
             playerShootSound.play();
+
+            // Spawn 1 bullet
             spawnBullet(1);
         }
 
+        // Iterate through all of the enemies in the scene and move them vertically
         for (var i = 0; i < enemies.length; i ++) {
            if (enemies[i] != null) {
                var enemy = enemies[i];
@@ -335,18 +356,17 @@ function update(delta) {
            }
         }
 
+        // Iterate through all of the enemies in the scene and move them vertically
         for (var i = 0; i < bullets.length; i ++) {
            if (bullets[i] != null) {
                var bullet = bullets[i];
                  bullet.moveVertical(2);
+                 // Check if current bullet position is less than or equal to 0
                  if (bullet.y <= 0) {
-                    console.log("Bullet removed");
+                    // Remove the specific bullet from the array
                     bullets.splice(i,1);
                  }
            }
-        }
-        if (lives <= 0) {
-           console.log ("SWITCH THE GAME STATE");
         }
 
         if (moveLeft) {
@@ -367,9 +387,10 @@ function update(delta) {
 
     case 2:
 
+    // Update the replay buttons position
     replayButton.update(delta);
+    // Set the current number of lives to 3
     lives = 3;
-    score = 0;
 
     break;
 
@@ -384,7 +405,6 @@ function spawnEnemy(value) {
         var randWidth = Math.random() * (canvas.width) + 5;
         enemyArray = new aSprite(randWidth, canvas.height/2 - 50 * i,"enemy1.png" ,0, 0);
         enemies.push(enemyArray);
-        console.log(i + " spawned");
     }
 }
 
@@ -397,6 +417,24 @@ function spawnBullet(value) {
         "bullet.png", 0, 100);
         bullets.push(bulletArray);
 
+    }
+}
+
+// Despawn all enemies in the scene that were spawned
+function despawnEnemies() {
+
+    for (var i = enemies.length; i > 0; i --) {
+
+        enemies.pop();
+    }
+}
+
+// Despawn all bullets in the scene that were spawned
+function despawnBullets() {
+
+    for (var i = bullets.length; i > 0; i --) {
+
+        bullets.pop();
     }
 }
 
@@ -470,21 +508,53 @@ function collision2 () {
     }
 }
 
+// Collision between button and touch
 function buttonCollision(button) {
 
+    // If the mouse position collides with the buttons position
     if (lastPt.x <= button.x + button.sImage.width &&
         lastPt.x >= button.x && lastPt.y <= button.y + button.sImage.height &&
         lastPt.y >= button.y) {
-            if (button == playButton) {
-                currentGameState = gameStates.MainGame;
-                spawnEnemy (5);
 
+            switch (currentGameState) {
+            case 0:
+            // If the button clicked is the play button
+            if (button == playButton) {
+                // Update the current game state to the main game scene
+                currentGameState = gameStates.MainGame;
+                // Set the player image to the original position as set in init()
+                playerImg.setXPos(canvas.width/2);
+                playerImg.setYPos(canvas.height - 35);
+                // Spawn enemies
+                spawnEnemy (50);
             }
 
-            else if (button == replayButton) {
+            break;
+
+            case 1:
+
+            break;
+
+            case 2:
+            // If the button clicked is the play button
+            if (button == replayButton) {
+                // Update the current state to the main game scene
                 currentGameState = gameStates.MainGame;
-                playerImg.setXPos(canvas.width/2 - 40);
-                playerImg.setYPos(canvas.height/4 - 50);
+                // Set the player image to the original position as set in init()
+                playerImg.setXPos(canvas.width/2);
+                playerImg.setYPos(canvas.height - 35);
+                // Despawn the enemies
+                despawnEnemies();
+                // Despawn the bullets
+                despawnBullets();
+                // Spawn enemies
+                spawnEnemy(50);
+                // Set the score to 0
+                score = 0;
+            }
+
+            break;
+
             }
 
         }
@@ -492,6 +562,7 @@ function buttonCollision(button) {
 
 }
 
+//
 function styleText(txtColour, txtFont, txtAlign, txtBaseline) {
 
     canvasContext.fillStyle = txtColour;
@@ -509,8 +580,8 @@ function touchUp(evt) {
 function touchDown(evt) {
     evt.preventDefault();
     touchXY(evt);
-    console.log(evt);
-    //buttonCollision(playButton);
+    buttonCollision(playButton);
+    buttonCollision (replayButton);
 }
 
 function touchXY(evt) {
@@ -520,8 +591,6 @@ function touchXY(evt) {
         var touchY = evt.touches[0].pageY - canvas.offsetTop;
         }
     lastPt = {x:evt.touches[0].pageX, y:evt.touches[0].pageY};
-    buttonCollision(playButton);
-    buttonCollision (replayButton);
 }
 
 
@@ -544,11 +613,6 @@ function keyDown(e) {
         playerShooting = true;
     }
 
-    if (e.keyCode == 69) {
-        if (currentGameState == gameStates.MainMenu) {
-           currentGameState = gameStates.MainGame;
-        }
-    }
 }
 
 function keyUp(e) {
@@ -566,9 +630,9 @@ function keyUp(e) {
         moveDown = false;
     }
 
-     if (e.keyCode == 32){
-            playerShooting = false;
-        }
+    if (e.keyCode == 32){
+        playerShooting = false;
+    }
 }
 
 
