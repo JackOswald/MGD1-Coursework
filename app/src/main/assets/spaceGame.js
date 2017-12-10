@@ -33,10 +33,9 @@ var score = 0;
 var lives = 3;
 var playerSpeed = 5;
 
-// Spawn timers
+// Timers
 var startTimeMS;
-var lastSpawn;
-var spawnTime;
+
 
 // Player controls
 var moveRight = false;
@@ -49,10 +48,29 @@ var playerShooting = false;
 var playButton;
 var replayButton;
 
+// Local Storage
+var localStorage;
+var isStorageAvailable;
+var highScore = 0;
+
 function load() {
+
     // Canvas loading
     canvas = document.getElementById('gameCanvas');
     canvasContext = canvas.getContext('2d');
+
+    // Check if local storage is available
+    if (storageAvailable('localStorage')) {
+
+        console.log("Local storage is available");
+        // Initialise local storage
+        showScore();
+        localStorage = window.localStorage;
+    }
+    else {
+        // Storage isnt availabe, so nothing to do
+        console.log("Storage not available")
+    }
 
     //Set the current game state to the main menu
     currentGameState = gameStates.MainMenu;
@@ -105,11 +123,12 @@ aSprite.prototype.update = function(deltaTime) {
 aSprite.prototype.movePlayerHorizontal = function (x){
 
     this.x -= x;
-    if (this.x <= 0) { // Ensure that the player is kept within the screen
+    // Ensure that the player is kept within the screen
+    if (this.x <= 0) {
     this.x = 0;
     }
-    else if (this.x >= canvas.width - playerImg.width) {
-        this.x = canvas.width - playerImg.width;
+    if (this.x >= canvas.width - 65) {
+        this.x = canvas.width - 65;
     }
 
 }
@@ -118,11 +137,12 @@ aSprite.prototype.movePlayerHorizontal = function (x){
 aSprite.prototype.movePlayerVertical = function (y){
 
     this.y -= y;
-    if (this.y <= 0) { // Ensure that the player is kept within the screen
-    this.y = 0;
+    // Restrict the player to the bottom section of the screen
+    if (this.y <= canvas.height/4 * 3) {
+    this.y = canvas.height/4 * 3;
     }
-    if (this.y >= canvas.height - playerImg.height) {
-        this.y = canvas.height - playerImg.height;
+    if (this.y >= canvas.height - 35) {
+        this.y = canvas.height - 35;
     }
 }
 
@@ -136,7 +156,8 @@ aSprite.prototype.moveHorizontal = function (x){
 aSprite.prototype.moveVertical = function (y){
 
     this.y -= y;
-    if (this.object = enemies) {    // Ensure that the current object (enemies) reappear if not destroyed
+    // Ensure that the current object (enemies) reappear if not destroyed
+    if (this.object = enemies) {
         if (this.y >= canvas.height) {
             this.y = 0;
         }
@@ -172,19 +193,22 @@ function init() {
 
     if (canvas.getContext) {
 
-        // Call event listeners
+        // Call event listeners for the window
         window.addEventListener('resize', resizeCanvas, false);
         window.addEventListener('orientationchange', resizeCanvas, false);
 
+        // Call event listeners for the touch control
         canvas.addEventListener("touchstart", touchDown, false);
         canvas.addEventListener("touchmove", touchXY, true);
         canvas.addEventListener("touchend", touchUp, false);
 
         document.body.addEventListener("touchcancel", touchUp, false);
 
+        // Call event listeners for keyboard/keypad control
         document.addEventListener('keydown', keyDown, false);
         document.addEventListener('keyup', keyUp, false);
 
+        // Call resize canvas function
         resizeCanvas();
 
         // Init sprites
@@ -200,18 +224,16 @@ function init() {
 
         // Set the start time
         startTimeMS = Date.now();
-        lastSpawn = Date.now();
-
-
-
     }
 
 }
 
-// Resize the canvas to the current window
+// Resize the canvas to the current window dimensions
 function resizeCanvas() {
 
+    // Set width to current window width
     canvas.width = window.innerWidth;
+    //  Set height to current window height
     canvas.height = window.innerHeight;
 }
 
@@ -226,12 +248,10 @@ function gameLoop() {
         mainMusicPlaying = true;
     }
 
+    // Update and render based on the elapsed time
     var elapsed = (Date.now() - startTimeMS/1000);
     update(elapsed);
     render(elapsed);
-
-    startTimeMS = Date.now();
-    spawnTime = (startTimeMS - lastSpawn)/1000;
 
     // Set the current game state to the game over screen if lives are 0 or less than 0
     if (lives <= 0) {
@@ -244,7 +264,6 @@ function gameLoop() {
 
     startTimeMS = Date.now();
     requestAnimationFrame(gameLoop);
-
 
 }
 
@@ -270,6 +289,7 @@ function render(delta) {
         canvasContext.fillText("Press SPACEBAR to shoot",
         canvas.width/2 , canvas.height/2 + 200);
 
+        // Render play button
         playButton.render();
 
     break;
@@ -283,15 +303,17 @@ function render(delta) {
         for (var i = 0; i < enemies.length; i ++) {
             if (enemies[i] != null) {
                 var enemy = enemies[i];
+                // Render all enemies
                 enemy.render();
-                }
+             }
         }
 
         // Iterate through all of the bullets in the scene and render them
         for (var i = 0; i < bullets.length; i ++) {
            if (bullets[i] != null) {
                var bullet = bullets[i];
-                 bullet.render();
+               // Render all bullets
+               bullet.render();
            }
         }
 
@@ -309,8 +331,11 @@ function render(delta) {
         styleText('00FF7F', '25px Times New Roman', 'center', 'hanging');    //'#005A31'
         canvasContext.fillText("Game Over", canvas.width/2, canvas.height/4 - 150);
 
-        styleText('00FF7F', '25px Times New Roman', 'center', 'hanging');    //'#005A31'
+        styleText('00FF7F', '25px Verona', 'center', 'hanging');    //'#005A31'
         canvasContext.fillText("Score is " + score, canvas.width/2, canvas.height/4 - 50);
+
+        styleText('00FF7F', '25px Verona', 'center', 'hanging');    //'#005A31'
+        canvasContext.fillText("High score is " + localStorage.getItem('highScore'), canvas.width/2, canvas.height/4);
 
         // Render the replay button
         replayButton.render();
@@ -337,9 +362,12 @@ function update(delta) {
 
     case 1:
 
+         fireRate++;
+
         // Check if the player is shooting
-        if (playerShooting) {
+        if (playerShooting && fireRate >= 15) {
             // Play shooting sound
+            fireRate = 0;
             var playerShootSound = new Audio ("playerFire.wav");
             playerShootSound.volume = 0.1;
             playerShootSound.play();
@@ -352,7 +380,7 @@ function update(delta) {
         for (var i = 0; i < enemies.length; i ++) {
            if (enemies[i] != null) {
                var enemy = enemies[i];
-                 enemy.moveVertical(-3);
+                 enemy.moveVertical(getRandomNumber(-3, -5));
            }
         }
 
@@ -360,7 +388,7 @@ function update(delta) {
         for (var i = 0; i < bullets.length; i ++) {
            if (bullets[i] != null) {
                var bullet = bullets[i];
-                 bullet.moveVertical(2);
+                 bullet.moveVertical(5);
                  // Check if current bullet position is less than or equal to 0
                  if (bullet.y <= 0) {
                     // Remove the specific bullet from the array
@@ -369,6 +397,7 @@ function update(delta) {
            }
         }
 
+        // Player movement
         if (moveLeft) {
             playerImg.movePlayerHorizontal(playerSpeed);
         }
@@ -487,10 +516,10 @@ function collision2 () {
         for (var j = 0; j < bullets.length; j ++) {
 
             // If an enemy from the enemies array collides with a bullet from the bullet array
-            if (bullets[j].x < enemies[i].x + enemies[i].sImage.width &&
-                bullets[j].x + bullets[j].sImage.width > enemies[i].x &&
-                bullets[j].y < enemies[i].y + enemies[i].sImage.height &&
-                bullets[j].y + bullets[j].sImage.height > enemies[i].y) {
+            if (enemies[i].x < bullets[j].x + bullets[j].sImage.width &&
+                enemies[i].x + enemies[i].sImage.width > bullets[j].x &&
+                enemies[i].y < bullets[j].y + bullets[j].sImage.height &&
+                enemies[i].y + enemies[i].sImage.height > bullets[j].y) {
 
                     // Play hit sound
                     var enemyHitSound = new Audio ("enemyHit.wav");
@@ -526,7 +555,7 @@ function buttonCollision(button) {
                 playerImg.setXPos(canvas.width/2);
                 playerImg.setYPos(canvas.height - 35);
                 // Spawn enemies
-                spawnEnemy (50);
+                spawnEnemy (125);
             }
 
             break;
@@ -548,21 +577,57 @@ function buttonCollision(button) {
                 // Despawn the bullets
                 despawnBullets();
                 // Spawn enemies
-                spawnEnemy(50);
+                spawnEnemy(125);
                 // Set the score to 0
                 score = 0;
             }
-
             break;
-
             }
-
         }
-
-
 }
 
-//
+// Get a random number between two min and max values
+function getRandomNumber(min, max) {
+
+    return Math.random() * (max - min) + min;
+}
+
+// Check the storage availability
+function storageAvailable(type) {
+
+    try {
+        var storage = window [type], x = '____storage test____';
+            storage.setItem(x, x);
+            storage.removeItem(x);
+            return true;
+    }
+
+    catch (e) {
+        return e instanceof DOMException && (
+            // Everything expect Firefox
+            e.code === 22 ||
+            // Firefox
+            e.code === 1014 ||
+            // Test name field, since code might not be present
+            // Everything except Firefox
+            e.name === 'QuotaExceededError' ||
+            // Firefox
+            e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+            // Acknowledge QuotaExceededError only if there is something already stored
+            storage.length !== 0;
+    }
+}
+
+// Checks if score is more than the stored high score
+function showScore() {
+
+    theScore = localStorage.getItem('highScore');
+    if (score > theScore ) {
+        localStorage.setItem('highScore', score);
+    }
+}
+
+// Set the text components
 function styleText(txtColour, txtFont, txtAlign, txtBaseline) {
 
     canvasContext.fillStyle = txtColour;
@@ -571,15 +636,18 @@ function styleText(txtColour, txtFont, txtAlign, txtBaseline) {
     canvasContext.textBaseline = txtBaseline;
 }
 
+// Handle touch up events
 function touchUp(evt) {
     evt.preventDefault();
     // Terminate touch path
     lastPt=null;
 }
 
+// Handle touch down events
 function touchDown(evt) {
     evt.preventDefault();
     touchXY(evt);
+    // Button collision check with play and replay button
     buttonCollision(playButton);
     buttonCollision (replayButton);
 }
@@ -593,7 +661,7 @@ function touchXY(evt) {
     lastPt = {x:evt.touches[0].pageX, y:evt.touches[0].pageY};
 }
 
-
+// Handle keydown events
 function keyDown(e) {
 
     if (e.keyCode == 39 || e.keyCode == 68) {
@@ -612,9 +680,9 @@ function keyDown(e) {
     if (e.keyCode == 32){
         playerShooting = true;
     }
-
 }
 
+// Handle keyup events
 function keyUp(e) {
 
     if (e.keyCode == 39 || e.keyCode == 68) {
@@ -634,15 +702,3 @@ function keyUp(e) {
         playerShooting = false;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-

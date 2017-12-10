@@ -2,6 +2,8 @@
   <dictionary name="Jack">
     <words>
       <w>despawn</w>
+      <w>keydown</w>
+      <w>keyup</w>
     </words>
   </dictionary>
 </component>
