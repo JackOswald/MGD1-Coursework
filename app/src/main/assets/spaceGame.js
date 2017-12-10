@@ -68,7 +68,7 @@ function load() {
         localStorage = window.localStorage;
     }
     else {
-        // Storage isnt availabe, so nothing to do
+        // Storage isnt available, so nothing to do
         console.log("Storage not available")
     }
 
