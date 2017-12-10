@@ -35,7 +35,7 @@ var playerSpeed = 5;
 
 // Timers
 var startTimeMS;
-
+var fireRate = 0;
 
 // Player controls
 var moveRight = false;
