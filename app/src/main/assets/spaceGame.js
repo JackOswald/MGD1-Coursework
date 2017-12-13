@@ -50,7 +50,6 @@ var replayButton;
 
 // Local Storage
 var localStorage;
-var isStorageAvailable;
 var highScore = 0;
 
 function load() {
@@ -64,8 +63,8 @@ function load() {
 
         console.log("Local storage is available");
         // Initialise local storage
-        showScore();
         localStorage = window.localStorage;
+        showScore();
     }
     else {
         // Storage isnt available, so nothing to do
@@ -84,7 +83,6 @@ function load() {
 
     // Run the game loop
     gameLoop();
-
 }
 
 // Creating a new object called 'aSprite' along with its constructor functions
@@ -130,7 +128,6 @@ aSprite.prototype.movePlayerHorizontal = function (x){
     if (this.x >= canvas.width - 65) {
         this.x = canvas.width - 65;
     }
-
 }
 
 // Move the player vertically by the value of y
@@ -217,7 +214,7 @@ function init() {
 
         // Init button
         playButton = new aSprite(canvas.width/2 - 40, canvas.height/4 - 50, "playButton.png",0 ,0);
-        replayButton = new aSprite (canvas.width/2 - 50, canvas.height/4 - 50, "replayButton.png", 0, 0);
+        replayButton = new aSprite (canvas.width/2, canvas.height/2, "replayButton.png", 0, 0);
 
         // Set the initial number of lives
         lives = 3;
@@ -225,7 +222,6 @@ function init() {
         // Set the start time
         startTimeMS = Date.now();
     }
-
 }
 
 // Resize the canvas to the current window dimensions
@@ -244,6 +240,7 @@ function gameLoop() {
     if (mainMusicPlaying == false) {
         mainMusic = new Audio ("backgroundMusic.mp3");
         mainMusic.play();
+        mainMusic.loop = true;
         mainMusic.volume = 0.5;
         mainMusicPlaying = true;
     }
@@ -262,9 +259,11 @@ function gameLoop() {
     collision1();
     collision2();
 
+    // Retrieve and set high score
+    showScore();
+
     startTimeMS = Date.now();
     requestAnimationFrame(gameLoop);
-
 }
 
 // Render function
@@ -343,8 +342,6 @@ function render(delta) {
         break;
 
     }
-
-
 }
 
 // Update the game state and the sprites within it
@@ -358,7 +355,6 @@ function update(delta) {
     playButton.update(delta);
 
     break;
-
 
     case 1:
 
@@ -411,7 +407,6 @@ function update(delta) {
             playerImg.movePlayerVertical(-playerSpeed);
         }
 
-
    break;
 
     case 2:
@@ -422,9 +417,7 @@ function update(delta) {
     lives = 3;
 
     break;
-
     }
-
 }
 
 // Spawn and enemy based on the value
@@ -503,7 +496,6 @@ function collision1() {
                 playerLoseLife();
             }
     }
-
 }
 
 // Collision between bullets and enemies
@@ -622,7 +614,7 @@ function storageAvailable(type) {
 function showScore() {
 
     theScore = localStorage.getItem('highScore');
-    if (score > theScore ) {
+    if (score > theScore) {
         localStorage.setItem('highScore', score);
     }
 }
@@ -648,7 +640,7 @@ function touchDown(evt) {
     evt.preventDefault();
     touchXY(evt);
     // Button collision check with play and replay button
-    buttonCollision(playButton);
+    buttonCollision (playButton);
     buttonCollision (replayButton);
 }
 
