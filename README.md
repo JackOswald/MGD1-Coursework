@@ -1,6 +1,6 @@
-# Mobile Game Development Coursework
+# Space Invaders
 
-A space invaders clone created in Android Studio using HTML, CSS and JavaScript.
+A space invaders clone created in Android Studio using HTML, CSS and JavaScript for my Mobile Game Development coursework.
 
 # What I Learned
 
